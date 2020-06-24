@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+{% form_theme form _self %}
+{% block title %}Hello AccountController!
+{% endblock %}
+
+{% block stylesheets %}
+	{{parent()}}
+	{# <link rel="stylesheet" href="/account/login.css"> #}
+
+	<style></style>
+{% endblock %}
+
+{% block body %}
+
+	<div class="row">
+		<div class="col s12 ">
+			<div class="card">
+				<div class="row news-create-header">
+					<div class="col s12">
+						<h5 class=" ">
+							S'inscrire
+						</h5>
+					</div>
+				</div>
+				<div class="card-content">
+					{{form_start(form)}}
+					{{form_widget(form)}}
+            
+					<button name="" type="submit" id="submit" class="btn btn-primary mt_1" href="#" role="button">Register</button>
+
+					{{form_end(form)}}
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+
+
+{% block javascripts %}
+	{{parent()}}
+	<script src="/validation/utile.js"></script>
+	<script src="/validation/register.js"></script>
+	<script></script>
+{% endblock %}
