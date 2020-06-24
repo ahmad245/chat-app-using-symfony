@@ -52,7 +52,7 @@ class MessageRepository extends ServiceEntityRepository
                  ->select('m')
                  ->where('m.conversation = :convId')
                  ->setParameter('convId',$covId)
-                 ->orderBy('m.id','DESC')
+                //  ->orderBy('m.id','DESC')
                  ->getQuery()
                  ->getResult();
                

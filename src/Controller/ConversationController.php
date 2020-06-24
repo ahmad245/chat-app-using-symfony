@@ -107,7 +107,7 @@ ConversationRepository $conversationRepository)
     
     
     /**
-     * @Route("/", name="getConversations", methods={"GET"})
+     * @Route("/", name="getConversations")
      */
     public function getConvs(Request $req) {
         $conversations = $this->conversationRepository->findConversationsByUser($this->getUser()->getId());
