@@ -109,10 +109,11 @@ class MessageController extends AbstractController
        
        // $user = $this->getUser();
       // dd($request->getContent());die;
-        $content = $request->getContent();
+        $content = json_decode ($request->getContent(),true);
+      //  var_dump($content);die;
         
         $message = new Message();
-        $message->setContent($content);
+        $message->setContent($content['content']);
        // $message->setUser($this->userRepository->findOneBy(['id' => 2]));
         $message->setUser($user);
        

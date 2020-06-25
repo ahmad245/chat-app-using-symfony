@@ -39,7 +39,7 @@ class HomeController extends AbstractController
                 'mercureAuthorization',
                 $token,
                 (new \DateTime())
-                ->add(new \DateInterval('PT2H')),
+                ->add(new \DateInterval('PT300H')),
                 '/.well-known/mercure',
                 null,
                 false,

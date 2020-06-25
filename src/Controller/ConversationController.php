@@ -114,7 +114,7 @@ ConversationRepository $conversationRepository)
         $hubURL=$this->getParameter('mercure.default_hub');
         $this->addLink($req,new Link('mercure',$hubURL) );
 
-        return $this->json($conversations);
+        return $this->json(['conversations'=>$conversations,'user'=>$this->getUser()->getUsername()]);
     }
 
 }
