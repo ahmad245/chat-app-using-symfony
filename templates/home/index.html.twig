@@ -136,28 +136,31 @@ const fetchMessages=(id)=>{
                        urlHub=response.headers.link.match(/<([^>]+)>;\s+rel=(?:mercure|"[^"]*mercure[^"]*")/)[1]
                       const hub = new URL(urlHub);
                       hub.searchParams.append('topic',`/conversations/${response.data.user}`);
+                      console.log(response.data)
                      
                       // Subscribe to updates
                       const eventSource = new EventSource(hub);
                       eventSource.onmessage = (event) => { updateConversation(JSON.parse(event.data) );
-                      fetchUsers()
+                      console.log(event.data)
+                      //fetchUsers()
                       }
          //   const hubUrl = response.headers.get('Link').match(/<([^>]+)>;\s+rel=(?:mercure|"[^"]*mercure[^"]*")/)[1];
-          
+              
             response.data.conversations.forEach((el)=>{
 
                   let li=document.createElement('li');
+                  li.classList.add('clearfix');
+                  li.setAttribute('id',el.conversationId);
                     li.innerHTML=`
-                      <li class="clearfix">
                         <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01.jpg" alt="avatar" />
-                    <div class="about">
+                           <div class="about">
                         <div class="name">${el.email}</div>
                         <div class="status">
                           {# <i class="fa fa-circle online"></i> online #}
-                          <i class="fa fa-circle online"></i> ${el.content}
+                           ${el.content}
                         </div>
                   </div>
-                </li>
+               
                     `;
                     li.addEventListener('click',fetchMessages.bind(null,el.conversationId))
                     listUser.append(li);     
@@ -235,17 +238,24 @@ const fetchMessages=(id)=>{
             message.value="";
          let mess= chat.querySelector('ul');
         mess.append(me);
+
+     let li=document.getElementById(`${convId}`);
+         li.querySelector('.status').innerText=el.content;
+       
+         listUser.insertBefore(li,listUser.querySelectorAll('li')[0]);
+
            
-                    const hub = new URL(urlHub);
+                    {# const hub = new URL(urlHub);
                       hub.searchParams.append('topic',`/conversations/${convId}`);
                       console.log(hub)
                       // Subscribe to updates
                       const eventSource = new EventSource(hub);
-                      eventSource.onmessage = event =>  console.log(event.data) ;
+                      eventSource.onmessage = event =>  console.log(event.data) ; #}
        })
      });
 
      const updateConversation=(el)=>{
+      
           let me=document.createElement('li');
        //  let other=document.createElement('li');
          me.classList.add('clearfix');
@@ -279,6 +289,12 @@ const fetchMessages=(id)=>{
          if(document.querySelector(`ul[data-conversation="${el.conversation.id}"]`)){
               document.querySelector(`ul[data-conversation="${el.conversation.id}"]`).append(me);
          }
+
+         let li=document.getElementById(`${el.conversation.id}`);
+         li.querySelector('.status').innerText=el.content;
+       
+         listUser.insertBefore(li,listUser.querySelectorAll('li')[0]);
+        // console.log(li,listUser,listUser.querySelectorAll('li')[0]);
         {# let mess= chat.querySelector('ul');
         mess.append(me); #}
        //  document.querySelector(`ul[data-conversation=${el.conversation}]`);

@@ -98,11 +98,13 @@ class MessageController extends AbstractController
     public function newMessage(Request $request, Conversation $conversation,SerializerInterface $serializer)
     {
         $user = $this->getUser();
+       
        // $user = 2;
         $recipient = $this->participantRepository->findParticipantByConverstionIdAndUserId(
             $conversation->getId(),
             $user->getId()
         );
+       
 
         // TODO: put everything back
       
@@ -137,7 +139,7 @@ class MessageController extends AbstractController
         ]);
         $update = new Update(
             [
-                sprintf("/conversations/%s", $conversation->getId()),
+              //  sprintf("/conversations/%s", $conversation->getId()),
                 sprintf("/conversations/%s", $recipient->getUser()->getUsername()),
             ],
             $messageSerialized,
