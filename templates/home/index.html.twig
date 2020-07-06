@@ -4,7 +4,9 @@
 
 {% block body %}
 <style>
-   
+   .modal h4{
+     color:#434651;
+   }
 </style>
   <div class="container clearfix">
     <div class="people-list" id="people-list">
@@ -12,6 +14,26 @@
         <input type="text" placeholder="search" />
         <i class="fa fa-search"></i>
       </div>
+
+      <a class="waves-effect waves-light btn modal-trigger"  href="#modal1" id="createConv">create conv</a>
+
+  <!-- Modal Structure -->
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <h4>create conversation</h4>
+      <div class="input-field col s12">
+        <select>
+          <option value="" disabled selected>Choose your option</option>
+        
+        </select>
+        <button  id="addConv">add</button>
+        <label>Materialize Select</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+    </div>
+  </div>
       <ul class="list list_user">
        
       </ul>
@@ -60,8 +82,13 @@ let listUser=document.querySelector('.list_user');
 let chat=document.querySelector('.chat-history');
 let message=document.getElementById('message-to-send');
 let btn=document.getElementById('btn');
+let createConv=document.getElementById('createConv');
+let modal= document.querySelector('.modal')
+let select=modal.querySelector('select');
+let addConv=modal.querySelector('#addConv');
 let convId;
 let urlHub;
+let hub;
 const fetchMessages=(id)=>{
      convId=id;
      console.log(convId)
@@ -134,14 +161,21 @@ const fetchMessages=(id)=>{
                   
 				  return  axios.get(urlUser).then((response) => {
                        urlHub=response.headers.link.match(/<([^>]+)>;\s+rel=(?:mercure|"[^"]*mercure[^"]*")/)[1]
-                      const hub = new URL(urlHub);
+                       hub = new URL(urlHub);
                       hub.searchParams.append('topic',`/conversations/${response.data.user}`);
-                      console.log(response.data)
+                      hub.searchParams.append('topic',`/allUser`);
+                     
                      
                       // Subscribe to updates
                       const eventSource = new EventSource(hub);
-                      eventSource.onmessage = (event) => { updateConversation(JSON.parse(event.data) );
-                      console.log(event.data)
+                      eventSource.onmessage = (event) => { 
+                        console.log(event.data)
+                        
+                      
+                            updateConversation(JSON.parse(event.data) );
+                        
+                       
+                      
                       //fetchUsers()
                       }
          //   const hubUrl = response.headers.get('Link').match(/<([^>]+)>;\s+rel=(?:mercure|"[^"]*mercure[^"]*")/)[1];
@@ -168,12 +202,32 @@ const fetchMessages=(id)=>{
             })
            
 			      return response.data;
-				}).catch((err) => {
+				}).then((data)=>{
+        
+                      hub.searchParams.append('topic',`/allUser`);
+                     
+                     
+                      // Subscribe to updates
+                      const eventSource = new EventSource(hub);
+                      eventSource.onmessage = (event) => { 
+                        let online=JSON.parse(event.data);
+                        console.log(online);
+                        if(online.online){
+                          console.log(event.data);
+                         // updateStatus();
+                        }
+                       
+                       
+                      
+                      //fetchUsers()
+           }
+           return data;
+        })
+        .catch((err) => {
 				console.log(err);
 				})
    }
-     fetchUsers();
-
+    
 
 
      const addMessage=(convId)=>{
@@ -235,14 +289,22 @@ const fetchMessages=(id)=>{
          
            `;
            
-            message.value="";
-         let mess= chat.querySelector('ul');
-        mess.append(me);
+             message.value="";
+             let mess= chat.querySelector('ul');
+             
+              if(!mess){
+                  mess= document.createElement('ul');
+                  mess.setAttribute('data-conversation',convId);
+                  chat.append(mess);
+                  
+                          
+              }
+             mess.append(me);
 
-     let li=document.getElementById(`${convId}`);
-         li.querySelector('.status').innerText=el.content;
+             let li=document.getElementById(`${convId}`);
+             li.querySelector('.status').innerText=content;
        
-         listUser.insertBefore(li,listUser.querySelectorAll('li')[0]);
+             listUser.insertBefore(li,listUser.querySelectorAll('li')[0]);
 
            
                     {# const hub = new URL(urlHub);
@@ -302,6 +364,57 @@ const fetchMessages=(id)=>{
 
      }
 
+
+createConv.addEventListener('click',()=>{
+  let urlUsers="/user/allUsers";
+  axios.get(urlUsers).then((response)=>{
+    let allUser=response.data.users;
+   
+    allUser.forEach((el)=>{
+     let option=document.createElement('option');
+     option.value=el.id;
+     option.innerText=el.email;
+     select.append(option);
+      var selectelems = document.querySelectorAll('select');
+              var selectinstances = M.FormSelect.init(selectelems, {});
+    })
+
+  })
+})
+
+addConv.addEventListener('click',(e)=>{
+  e.preventDefault();
+  if(select.value){
+ 
+  axios.post(`/conversations/add/${select.value}`,{
+         'id':select.value
+       }).then((response)=>{ 
+   let id= response.data.id;
+    let user=response.data.otheruser;
+       let li=document.createElement('li');
+                  li.classList.add('clearfix');
+                  li.setAttribute('id',id);
+                    li.innerHTML=`
+                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01.jpg" alt="avatar" />
+                           <div class="about">
+                        <div class="name">${user.email}</div>
+                        <div class="status">
+                          {# <i class="fa fa-circle online"></i> online #}
+                          
+                        </div>
+                  </div>
+               
+                    `;
+                    li.addEventListener('click',fetchMessages.bind(null,id))
+                    listUser.append(li);  
+ })
+ 
+  }
+ 
+})
+
+
+ fetchUsers();
 
 
 

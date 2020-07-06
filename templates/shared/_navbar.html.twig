@@ -1,0 +1,35 @@
+<!-- Dropdown Structure -->
+		
+	
+		<nav>
+			<div class="nav-wrapper">
+			
+              
+
+				<ul class="right hide-on-med-and-down">
+			         	
+					{% if app.user %}
+
+					
+						<li>
+							<a href="{{path('account_checkLogout')}}">logout</a>
+						</li>
+					{% else %}
+						<li>
+							<a href="{{path('account_register')}}">Sign Up</a>
+						</li>
+						<li>
+							<a href="{{path('account_login')}}">Sign in</a>
+						</li>
+						
+					{% endif %}
+
+
+					<!-- Dropdown Trigger -->
+
+				</ul>
+			</div>
+		</nav>
+
+
+  </ul>

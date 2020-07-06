@@ -1,17 +1,22 @@
 <?php
 
 namespace App\Controller;
-use App\Entity\Conversation;
+use App\Entity\User;
 use App\Entity\Participant;
-use App\Repository\ConversationRepository;
+use App\Entity\Conversation;
 use App\Repository\UserRepository;
+use Symfony\Component\WebLink\Link;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Repository\ConversationRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\WebLink\Link;
+use Symfony\Component\Mercure\PublisherInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Mercure\Update;
+
 
 /**
  * @Route("/conversations", name="conversations.")
@@ -30,30 +35,67 @@ class ConversationController extends AbstractController
      * @var ConversationRepository
      */
     private $conversationRepository;
+    /**
+     * @var PublisherInterface
+     */
+    private $publisher;
 
     public function __construct(UserRepository $userRepository,
                                 EntityManagerInterface $entityManager,
-ConversationRepository $conversationRepository)
+ConversationRepository $conversationRepository
+, PublisherInterface $publisher)
     {
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
         $this->conversationRepository = $conversationRepository;
+        $this->publisher = $publisher;
     }
 
+   
+   
     /**
-     * @Route("/", name="newConversations", methods={"POST"})
+     * @Route("/", name="getConversations" ,methods={"GET"})
+     */
+    public function getConvs(Request $req,SerializerInterface $serializer) {
+        $conversations = $this->conversationRepository->findConversationsByUser($this->getUser()->getId());
+        $hubURL=$this->getParameter('mercure.default_hub');
+        $this->addLink($req,new Link('mercure',$hubURL) );
+
+              $message=["online"=>true];
+            $messageSerialized = $serializer->serialize($message, 'json');
+            $update = new Update(
+                [
+                  //  sprintf("/conversations/%s", $conversation->getId()),
+                   '/allUser'
+                ],
+                $messageSerialized,
+                false
+                
+                // [
+                //     sprintf("/%s", $recipient->getUser()->getUsername())
+                // ]
+            );
+         
+    
+            $this->publisher->__invoke($update);
+
+        return $this->json(['conversations'=>$conversations,'user'=>$this->getUser()->getUsername()]);
+    }
+
+     /**
+     * @Route("/add/{id}", name="newConversations")
      * @param Request $request
+     *  @param User $otherUser
      * @return JsonResponse
      * @throws \Exception
      */
-    public function index(Request $request)
+    public function index(Request $request,User $otherUser)
     {
-        $otherUser = $request->get('otherUser', 0);
-        $otherUser=3;
-        $otherUser = $this->userRepository->find($otherUser);
-
-     
-
+        // $otherUser = $request->get('otherUser', 0);
+        // $otherUser=3;
+       // $otherUser = $this->userRepository->find($otherUser);
+        //$otherUser = $this->userRepository->find($otherUser);
+        $content = json_decode ($request->getContent(),true);
         if (is_null($otherUser)) {
             throw new \Exception("The user was not found");
         }
@@ -105,16 +147,7 @@ ConversationRepository $conversationRepository)
         ], Response::HTTP_CREATED, [], ['groups'=>['conversation']]);
     }
     
-    
-    /**
-     * @Route("/", name="getConversations")
-     */
-    public function getConvs(Request $req) {
-        $conversations = $this->conversationRepository->findConversationsByUser($this->getUser()->getId());
-        $hubURL=$this->getParameter('mercure.default_hub');
-        $this->addLink($req,new Link('mercure',$hubURL) );
 
-        return $this->json(['conversations'=>$conversations,'user'=>$this->getUser()->getUsername()]);
-    }
+    
 
 }

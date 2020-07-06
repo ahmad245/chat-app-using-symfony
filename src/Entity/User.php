@@ -25,6 +25,7 @@ class User implements UserInterface, \Serializable
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      * @Groups("conversation")
+     * @Groups("users")
      * 
      */
     private $id;
@@ -40,6 +41,7 @@ class User implements UserInterface, \Serializable
      * )
      *   @Groups("user")
      * @Groups("conversation")
+     *  @Groups("users")
      *
      */
     private $firstName;
@@ -55,6 +57,7 @@ class User implements UserInterface, \Serializable
      * )
      * @Groups("user")
      * @Groups("conversation")
+     *  @Groups("users")
      */
     private $lastName;
 
@@ -70,6 +73,7 @@ class User implements UserInterface, \Serializable
      * )
      * @Groups("user")
      * @Groups("conversation")
+     *  @Groups("users")
      */
     private $email;
 
@@ -135,6 +139,39 @@ class User implements UserInterface, \Serializable
     private $messages;
 
     
+/**
+     * @var \DateTime
+     * @ORM\Column(type="datetime")
+     */
+    protected $lastActivityAt;
+
+/**
+ * @param \Datetime $lastActivityAt
+ */
+public function setLastActivityAt($lastActivityAt)
+{
+    $this->lastActivityAt = $lastActivityAt;
+}
+
+/**
+ * @return \Datetime
+ */
+public function getLastActivityAt()
+{
+    return $this->lastActivityAt;
+}
+
+/**
+ * @return Bool Whether the user is active or not
+ */
+public function isActiveNow()
+{
+    // Delay during wich the user will be considered as still active
+    $delay = new \DateTime('2 minutes ago');
+
+    return ( $this->getLastActivityAt() > $delay );
+}
+
 
 
 
