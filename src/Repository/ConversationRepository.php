@@ -90,7 +90,7 @@ class ConversationRepository extends ServiceEntityRepository
       public function findConversationsByUser(int $userId){
           $ids=$this->getAllConveersationIds($userId);
            $query=$this->createQueryBuilder('c')
-           ->select('c.id as conversationId ,otherUser.email,lm.content,lm.createdAt')
+           ->select('c.id as conversationId ,otherUser.email,otherUser.lastActivityAt,otherUser.id,lm.content,lm.createdAt')
                        ->join('c.participants','p')
                         ->leftJoin('c.lastMessage', 'lm')
                        ->innerJoin('p.user', 'otherUser')

@@ -145,6 +145,14 @@ class User implements UserInterface, \Serializable
      */
     protected $lastActivityAt;
 
+    public $isActive;
+
+    public function  getIsActive(){
+        $delay = new \DateTime('2 minutes ago');
+
+        return ( $this->getLastActivityAt() > $delay );
+    }
+
 /**
  * @param \Datetime $lastActivityAt
  */
@@ -160,6 +168,8 @@ public function getLastActivityAt()
 {
     return $this->lastActivityAt;
 }
+
+
 
 /**
  * @return Bool Whether the user is active or not

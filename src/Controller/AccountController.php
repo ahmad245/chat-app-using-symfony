@@ -62,7 +62,7 @@ class AccountController extends AbstractController
          * @return void
          */
         public function logout(){
-       dump("hiiiiiiiiii");die;
+     
            
           
         }
@@ -96,7 +96,7 @@ class AccountController extends AbstractController
          * @Route("/checkLogout",name="account_checkLogout")
          */
         public function checkLogout(SerializerInterface $serializer){
-                $message=["online"=>false];
+           $message=["online"=>false,"lastActive"=>$this->getUser()->getLastActivityAt(),"email"=>$this->getUser()->getUsername()];
             $messageSerialized = $serializer->serialize($message, 'json');
             $update = new Update(
                 [

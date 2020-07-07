@@ -61,7 +61,7 @@ ConversationRepository $conversationRepository
         $hubURL=$this->getParameter('mercure.default_hub');
         $this->addLink($req,new Link('mercure',$hubURL) );
 
-              $message=["online"=>true];
+        $message=["online"=>$this->getUser()->isActiveNow(),"lastActive"=>$this->getUser()->getLastActivityAt(),"email"=>$this->getUser()->getUsername()];
             $messageSerialized = $serializer->serialize($message, 'json');
             $update = new Update(
                 [

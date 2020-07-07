@@ -135,7 +135,7 @@ class MessageController extends AbstractController
         }
         $message->setMine(false);
         $messageSerialized = $serializer->serialize($message, 'json', [
-            'attributes' => ['id', 'content', 'createdAt', 'mine', 'conversation' => ['id']]
+            'attributes' => ['id', 'content', 'createdAt', 'mine', 'conversation' => ['id'],"user"=>["id","email","firstName"]]
         ]);
         $update = new Update(
             [

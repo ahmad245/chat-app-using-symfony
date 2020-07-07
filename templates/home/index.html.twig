@@ -77,7 +77,10 @@
 
 {% block javascripts %}
 {{parent()}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.2/timeago.min.js"></script>
 <script>
+ moment().format();
 let listUser=document.querySelector('.list_user');
 let chat=document.querySelector('.chat-history');
 let message=document.getElementById('message-to-send');
@@ -89,6 +92,7 @@ let addConv=modal.querySelector('#addConv');
 let convId;
 let urlHub;
 let hub;
+  let resttime=[];
 const fetchMessages=(id)=>{
      convId=id;
      console.log(convId)
@@ -163,20 +167,14 @@ const fetchMessages=(id)=>{
                        urlHub=response.headers.link.match(/<([^>]+)>;\s+rel=(?:mercure|"[^"]*mercure[^"]*")/)[1]
                        hub = new URL(urlHub);
                       hub.searchParams.append('topic',`/conversations/${response.data.user}`);
-                      hub.searchParams.append('topic',`/allUser`);
-                     
+                   
+                     console.log(response.data);
                      
                       // Subscribe to updates
                       const eventSource = new EventSource(hub);
                       eventSource.onmessage = (event) => { 
-                        console.log(event.data)
-                        
-                      
-                            updateConversation(JSON.parse(event.data) );
-                        
-                       
-                      
-                      //fetchUsers()
+                        console.log(event.data)                     
+                            updateConversation(JSON.parse(event.data) );             
                       }
          //   const hubUrl = response.headers.get('Link').match(/<([^>]+)>;\s+rel=(?:mercure|"[^"]*mercure[^"]*")/)[1];
               
@@ -190,14 +188,17 @@ const fetchMessages=(id)=>{
                            <div class="about">
                         <div class="name">${el.email}</div>
                         <div class="status">
-                          {# <i class="fa fa-circle online"></i> online #}
+                          
                            ${el.content}
                         </div>
+                        <i class="fa fa-circle online" id="${el.email}"></i> 
                   </div>
                
                     `;
+                  
                     li.addEventListener('click',fetchMessages.bind(null,el.conversationId))
-                    listUser.append(li);     
+                    listUser.append(li); 
+                     updateStateForFirstTime(el)    
 
             })
            
@@ -212,12 +213,8 @@ const fetchMessages=(id)=>{
                       eventSource.onmessage = (event) => { 
                         let online=JSON.parse(event.data);
                         console.log(online);
-                        if(online.online){
-                          console.log(event.data);
-                         // updateStatus();
-                        }
-                       
-                       
+                        updateState(online);
+                        
                       
                       //fetchUsers()
            }
@@ -280,7 +277,7 @@ const fetchMessages=(id)=>{
             
             <div class="message-data align-right">
               <span class="message-data-time" >
-              <span class="message-data-name" >Olia</span> <i class="fa fa-circle me"></i>
+              <span class="message-data-name" >me</span> <i class="fa fa-circle me"></i>
               
             </div>
             <div class="message other-message float-right">
@@ -326,7 +323,7 @@ const fetchMessages=(id)=>{
             
             <div class="message-data align-right">
               <span class="message-data-time" >${el.createdAt}
-              <span class="message-data-name" >Olia</span> <i class="fa fa-circle me"></i>
+              <span class="message-data-name" >me</span> <i class="fa fa-circle me"></i>
               
             </div>
             <div class="message other-message float-right">
@@ -339,7 +336,7 @@ const fetchMessages=(id)=>{
             me.innerHTML=`
          
             <div class="message-data">
-              <span class="message-data-name"><i class="fa fa-circle online"></i> Vincent</span>
+              <span class="message-data-name"><i class="fa fa-circle online"></i> ${el.user.firstName}</span>
               <span class="message-data-time">${el.createdAt}</span>
             </div>
             <div class="message my-message">
@@ -413,6 +410,45 @@ addConv.addEventListener('click',(e)=>{
  
 })
 
+
+const updateState=(online)=>{
+  let element=document.getElementById(`${online.email}`);
+  clearInterval(resttime[online.email]);
+  if(element){
+  element.innerText=online.online?'online':  moment(online.lastActive).fromNow();
+  if(!online.online){
+
+    resttime[online.email]=  setInterval(()=>{
+      if(document.getElementById(`${online.email}`).innerText!='online'){
+
+            document.getElementById(`${online.email}`).innerText= moment(online.lastActive).fromNow();
+      }
+                          
+                        },1000)
+  }
+  }
+
+  
+ 
+}
+
+const updateStateForFirstTime=(el)=>{
+  let element=document.getElementById(`${el.email}`);
+  clearInterval(resttime[el.email]);
+  if(element){
+ element.innerText =moment().subtract(2, 'minutes') < moment(el.lastActivityAt) ?'online' :moment(el.lastActivityAt).fromNow();
+  if(!(moment().subtract(1, 'minutes') < moment(el.lastActivityAt))){
+
+     resttime[el.email]=  setInterval(()=>{
+      if(document.getElementById(`${el.email}`).innerText!='online'){
+document.getElementById(`${el.email}`).innerText=moment(el.lastActivityAt).fromNow();
+      }
+                          
+                        },1000)
+  }
+  }
+
+}
 
  fetchUsers();
 
