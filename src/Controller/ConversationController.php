@@ -22,7 +22,7 @@ use Symfony\Component\Mercure\Update;
  * @Route("/conversations", name="conversations.")
  */
 class ConversationController extends AbstractController
-{
+{    const ATTRIBUTES_TO_SERIALIZE = ['id','email','firstName','lastName','lastActivityAt'];
     /**
      * @var UserRepository
      */
@@ -91,10 +91,7 @@ ConversationRepository $conversationRepository
      */
     public function index(Request $request,User $otherUser)
     {
-        // $otherUser = $request->get('otherUser', 0);
-        // $otherUser=3;
-       // $otherUser = $this->userRepository->find($otherUser);
-        //$otherUser = $this->userRepository->find($otherUser);
+        
         $content = json_decode ($request->getContent(),true);
         if (is_null($otherUser)) {
             throw new \Exception("The user was not found");
@@ -144,7 +141,9 @@ ConversationRepository $conversationRepository
         return $this->json([
             'id' => $conversation->getId(),
             'otheruser'=> $otherUser
-        ], Response::HTTP_CREATED, [], ['groups'=>['conversation']]);
+        ], Response::HTTP_CREATED, [], [
+            'attributes' => self::ATTRIBUTES_TO_SERIALIZE
+        ]);
     }
     
 

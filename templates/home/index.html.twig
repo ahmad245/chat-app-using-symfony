@@ -1,462 +1,73 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Hello HomeController!
+{% endblock %}
 
 {% block body %}
-<style>
-   .modal h4{
-     color:#434651;
-   }
-</style>
-  <div class="container clearfix">
-    <div class="people-list" id="people-list">
-      <div class="search">
-        <input type="text" placeholder="search" />
-        <i class="fa fa-search"></i>
-      </div>
+	<style>
+		.modal {
+			background: #F2F5F8;
+			color: #434651;
 
-      <a class="waves-effect waves-light btn modal-trigger"  href="#modal1" id="createConv">create conv</a>
+		}
+		.modal h4 {
+			color: #434651;
+		}
+		.chat-header .chat-with {
+			font-weight: bold;
+			font-size: 16px;
 
-  <!-- Modal Structure -->
-  <div id="modal1" class="modal">
-    <div class="modal-content">
-      <h4>create conversation</h4>
-      <div class="input-field col s12">
-        <select>
-          <option value="" disabled selected>Choose your option</option>
-        
-        </select>
-        <button  id="addConv">add</button>
-        <label>Materialize Select</label>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
-    </div>
-  </div>
-      <ul class="list list_user">
-       
-      </ul>
-    </div>
-    
-    <div class="chat">
-      <div class="chat-header clearfix">
-        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01_green.jpg" alt="avatar" />
-        
-        <div class="chat-about">
-          <div class="chat-with">Chat with Vincent Porter</div>
-          <div class="chat-num-messages">already 1 902 messages</div>
-        </div>
-        <i class="fa fa-star"></i>
-      </div> <!-- end chat-header -->
-      
-      <div class="chat-history">
-        {# <ul class="messages">
-          
-         
-          
-        </ul> #}
-        
-      </div> <!-- end chat-history -->
-      
-      <div class="chat-message clearfix">
-        <textarea name="message-to-send" id="message-to-send" placeholder ="Type your message" rows="3"></textarea>
-                
-        <i class="fa fa-file-o"></i> &nbsp;&nbsp;&nbsp;
-        <i class="fa fa-file-image-o"></i>
-        
-        <button id="btn">Send</button>
+		}
+		.chat-header {
+			padding: 20px;
+			border-bottom: 2px solid white;
+			position: relative;
+		}
+		.icon_add_conv {
+			position: absolute;
+			top: 1rem;
+			right: 1rem;
+			cursor: pointer;
+		}
+		.person_add {
+			width: 100%;
+			text-align: center;
+		}
+    .search{
+      display:flex;
+      align-items:center;
+    }
+	</style>
+	<div class="container clearfix">
+		<div class="people-list" id="people-list">
+			<div class="search">
+				<input type="text" placeholder="search"/>	<a class="modal-trigger " href="#modal1" id="createConv">	<i class="material-icons ">person_add</i></a>
+				<i class="fa fa-search"></i>
+			</div>
 
-      </div> <!-- end chat-message -->
-      
-    </div> <!-- end chat -->
-    
-  </div> <!-- end container -->
+			<div class="person_add">
+			
+</div>
+			<!-- Modal Structure -->
+			{% include "modal/modalUserList.html.twig" %}
+			<ul class="list list_user"></ul>
+		</div>
+
+		{# chat #}
+		{% include "chat/chat.html.twig" %}
+
+	</div>
+	<!-- end container -->
 
 {% endblock %}
 
 {% block javascripts %}
-{{parent()}}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.2/timeago.min.js"></script>
-<script>
- moment().format();
-let listUser=document.querySelector('.list_user');
-let chat=document.querySelector('.chat-history');
-let message=document.getElementById('message-to-send');
-let btn=document.getElementById('btn');
-let createConv=document.getElementById('createConv');
-let modal= document.querySelector('.modal')
-let select=modal.querySelector('select');
-let addConv=modal.querySelector('#addConv');
-let convId;
-let urlHub;
-let hub;
-  let resttime=[];
-const fetchMessages=(id)=>{
-     convId=id;
-     console.log(convId)
-     let messages;
-    
-      messages=document.querySelector(`ul[data-conversation="${id}"]`);
+	{{parent()}}
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/4.0.2/timeago.min.js"></script>
+	<script src="/js/init.js"></script>
+	<script src="/js/userCard.js"></script>
+	<script src="/js/message.js"></script>
 
-     if(!messages){
-         messages= document.createElement('ul');
-         messages.setAttribute('data-conversation',id);
-        
-                 
-     }
- 
-  return axios.get(`/messages/${id}`).then((response) => {
-                     //  urlHub=response.headers.link.match(/<([^>]+)>;\s+rel=(?:mercure|"[^"]*mercure[^"]*")/)[1]
-                   
-                      //addMessage(JSON.parse(event.data) );
-    
-           chat.innerHTML="";
-    response.data.forEach((el)=>{
-         let me=document.createElement('li');
-       //  let other=document.createElement('li');
-         me.classList.add('clearfix');
-         if(el.mine){
-           me.innerHTML=`
-            
-            <div class="message-data align-right">
-              <span class="message-data-time" >${el.createdAt}
-              <span class="message-data-name" >Olia</span> <i class="fa fa-circle me"></i>
-              
-            </div>
-            <div class="message other-message float-right">
-              ${el.content}
-            </div>
-         
-           `;
-         }
-         else{
-            me.innerHTML=`
-         
-            <div class="message-data">
-              <span class="message-data-name"><i class="fa fa-circle online"></i> Vincent</span>
-              <span class="message-data-time">${el.createdAt}</span>
-            </div>
-            <div class="message my-message">
-               ${el.content}
-            </div>
-          
-            `;
-         }
-
-         messages.append(me);
-         chat.append(messages);
-      
-        
-       
-        
-
-    })
-   
-
-    return response.data;
-  })
-}
-   const fetchUsers=()=>{
-
-      listUser.innerHTML="";
-            let urlUser = "/conversations";
-                  
-				  return  axios.get(urlUser).then((response) => {
-                       urlHub=response.headers.link.match(/<([^>]+)>;\s+rel=(?:mercure|"[^"]*mercure[^"]*")/)[1]
-                       hub = new URL(urlHub);
-                      hub.searchParams.append('topic',`/conversations/${response.data.user}`);
-                   
-                     console.log(response.data);
-                     
-                      // Subscribe to updates
-                      const eventSource = new EventSource(hub);
-                      eventSource.onmessage = (event) => { 
-                        console.log(event.data)                     
-                            updateConversation(JSON.parse(event.data) );             
-                      }
-         //   const hubUrl = response.headers.get('Link').match(/<([^>]+)>;\s+rel=(?:mercure|"[^"]*mercure[^"]*")/)[1];
-              
-            response.data.conversations.forEach((el)=>{
-
-                  let li=document.createElement('li');
-                  li.classList.add('clearfix');
-                  li.setAttribute('id',el.conversationId);
-                    li.innerHTML=`
-                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01.jpg" alt="avatar" />
-                           <div class="about">
-                        <div class="name">${el.email}</div>
-                        <div class="status">
-                          
-                           ${el.content}
-                        </div>
-                        <i class="fa fa-circle online" id="${el.email}"></i> 
-                  </div>
-               
-                    `;
-                  
-                    li.addEventListener('click',fetchMessages.bind(null,el.conversationId))
-                    listUser.append(li); 
-                     updateStateForFirstTime(el)    
-
-            })
-           
-			      return response.data;
-				}).then((data)=>{
-        
-                      hub.searchParams.append('topic',`/allUser`);
-                     
-                     
-                      // Subscribe to updates
-                      const eventSource = new EventSource(hub);
-                      eventSource.onmessage = (event) => { 
-                        let online=JSON.parse(event.data);
-                        console.log(online);
-                        updateState(online);
-                        
-                      
-                      //fetchUsers()
-           }
-           return data;
-        })
-        .catch((err) => {
-				console.log(err);
-				})
-   }
-    
-
-
-     const addMessage=(convId)=>{
-
-       let content=message.value;
-       axios.post(`/messages/${convId}`,{
-         'content':content
-       }).then((response) => {
-         //console.log(response.data);
-          //fetchMessages(convId);
-           let me=document.createElement('li');
-       //  let other=document.createElement('li');
-         me.classList.add('clearfix');
-        
-           me.innerHTML=`
-            
-            <div class="message-data align-right">
-              <span class="message-data-time" >
-              <span class="message-data-name" >Olia</span> <i class="fa fa-circle me"></i>
-              
-            </div>
-            <div class="message other-message float-right">
-              ${content}
-            </div>
-         
-           `;
-           
-            message.value="";
-         let mess= chat.querySelector('ul');
-        mess.append(me);
-        
-       })
-     }
-
-     btn.addEventListener('click',()=>{
-      
-       let content=message.value;
-       axios.post(`/messages/${convId}`,{
-         'content':content
-       }).then((response) => {
-
-          
-         //console.log(response.data);
-          //fetchMessages(convId);
-           let me=document.createElement('li');
-       //  let other=document.createElement('li');
-         me.classList.add('clearfix');
-        
-           me.innerHTML=`
-            
-            <div class="message-data align-right">
-              <span class="message-data-time" >
-              <span class="message-data-name" >me</span> <i class="fa fa-circle me"></i>
-              
-            </div>
-            <div class="message other-message float-right">
-              ${content}
-            </div>
-         
-           `;
-           
-             message.value="";
-             let mess= chat.querySelector('ul');
-             
-              if(!mess){
-                  mess= document.createElement('ul');
-                  mess.setAttribute('data-conversation',convId);
-                  chat.append(mess);
-                  
-                          
-              }
-             mess.append(me);
-
-             let li=document.getElementById(`${convId}`);
-             li.querySelector('.status').innerText=content;
-       
-             listUser.insertBefore(li,listUser.querySelectorAll('li')[0]);
-
-           
-                    {# const hub = new URL(urlHub);
-                      hub.searchParams.append('topic',`/conversations/${convId}`);
-                      console.log(hub)
-                      // Subscribe to updates
-                      const eventSource = new EventSource(hub);
-                      eventSource.onmessage = event =>  console.log(event.data) ; #}
-       })
-     });
-
-     const updateConversation=(el)=>{
-      
-          let me=document.createElement('li');
-       //  let other=document.createElement('li');
-         me.classList.add('clearfix');
-         if(el.mine){
-           me.innerHTML=`
-            
-            <div class="message-data align-right">
-              <span class="message-data-time" >${el.createdAt}
-              <span class="message-data-name" >me</span> <i class="fa fa-circle me"></i>
-              
-            </div>
-            <div class="message other-message float-right">
-              ${el.content}
-            </div>
-         
-           `;
-         }
-         else{
-            me.innerHTML=`
-         
-            <div class="message-data">
-              <span class="message-data-name"><i class="fa fa-circle online"></i> ${el.user.firstName}</span>
-              <span class="message-data-time">${el.createdAt}</span>
-            </div>
-            <div class="message my-message">
-               ${el.content}
-            </div>
-          
-            `;
-         }
-         if(document.querySelector(`ul[data-conversation="${el.conversation.id}"]`)){
-              document.querySelector(`ul[data-conversation="${el.conversation.id}"]`).append(me);
-         }
-
-         let li=document.getElementById(`${el.conversation.id}`);
-         li.querySelector('.status').innerText=el.content;
-       
-         listUser.insertBefore(li,listUser.querySelectorAll('li')[0]);
-        // console.log(li,listUser,listUser.querySelectorAll('li')[0]);
-        {# let mess= chat.querySelector('ul');
-        mess.append(me); #}
-       //  document.querySelector(`ul[data-conversation=${el.conversation}]`);
-        //  document.querySelector(`ul[data-conversation=${el.conversation.id}]`).append(me);
-
-     }
-
-
-createConv.addEventListener('click',()=>{
-  let urlUsers="/user/allUsers";
-  axios.get(urlUsers).then((response)=>{
-    let allUser=response.data.users;
-   
-    allUser.forEach((el)=>{
-     let option=document.createElement('option');
-     option.value=el.id;
-     option.innerText=el.email;
-     select.append(option);
-      var selectelems = document.querySelectorAll('select');
-              var selectinstances = M.FormSelect.init(selectelems, {});
-    })
-
-  })
-})
-
-addConv.addEventListener('click',(e)=>{
-  e.preventDefault();
-  if(select.value){
- 
-  axios.post(`/conversations/add/${select.value}`,{
-         'id':select.value
-       }).then((response)=>{ 
-   let id= response.data.id;
-    let user=response.data.otheruser;
-       let li=document.createElement('li');
-                  li.classList.add('clearfix');
-                  li.setAttribute('id',id);
-                    li.innerHTML=`
-                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01.jpg" alt="avatar" />
-                           <div class="about">
-                        <div class="name">${user.email}</div>
-                        <div class="status">
-                          {# <i class="fa fa-circle online"></i> online #}
-                          
-                        </div>
-                  </div>
-               
-                    `;
-                    li.addEventListener('click',fetchMessages.bind(null,id))
-                    listUser.append(li);  
- })
- 
-  }
- 
-})
-
-
-const updateState=(online)=>{
-  let element=document.getElementById(`${online.email}`);
-  clearInterval(resttime[online.email]);
-  if(element){
-  element.innerText=online.online?'online':  moment(online.lastActive).fromNow();
-  if(!online.online){
-
-    resttime[online.email]=  setInterval(()=>{
-      if(document.getElementById(`${online.email}`).innerText!='online'){
-
-            document.getElementById(`${online.email}`).innerText= moment(online.lastActive).fromNow();
-      }
-                          
-                        },1000)
-  }
-  }
-
-  
- 
-}
-
-const updateStateForFirstTime=(el)=>{
-  let element=document.getElementById(`${el.email}`);
-  clearInterval(resttime[el.email]);
-  if(element){
- element.innerText =moment().subtract(2, 'minutes') < moment(el.lastActivityAt) ?'online' :moment(el.lastActivityAt).fromNow();
-  if(!(moment().subtract(1, 'minutes') < moment(el.lastActivityAt))){
-
-     resttime[el.email]=  setInterval(()=>{
-      if(document.getElementById(`${el.email}`).innerText!='online'){
-document.getElementById(`${el.email}`).innerText=moment(el.lastActivityAt).fromNow();
-      }
-                          
-                        },1000)
-  }
-  }
-
-}
-
- fetchUsers();
-
-
-
-
-   
-
-  
-</script>
+	<script src="js/manageChat.js"></script>
 {% endblock %}

@@ -107,12 +107,6 @@ class User implements UserInterface, \Serializable
 
     private $confirmPassword;
 
-   
-
-
- 
-   
-
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Role", mappedBy="users")
      */
@@ -140,10 +134,10 @@ class User implements UserInterface, \Serializable
 
     
 /**
-     * @var \DateTime
      * @ORM\Column(type="datetime")
+     * @Groups("conversation")
      */
-    protected $lastActivityAt;
+    private $lastActivityAt;
 
     public $isActive;
 

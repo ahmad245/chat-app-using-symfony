@@ -23,7 +23,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class MessageController extends AbstractController
 {
 
-    const ATTRIBUTES_TO_SERIALIZE = ['id', 'content', 'createdAt', 'mine'];
+    const ATTRIBUTES_TO_SERIALIZE = ['id', 'content', 'createdAt', 'mine','user'=>['id','email','firstName']];
 
     /**
      * @var EntityManagerInterface
@@ -156,5 +156,10 @@ class MessageController extends AbstractController
         return $this->json($message, Response::HTTP_CREATED, [], [
             'attributes' => self::ATTRIBUTES_TO_SERIALIZE
         ]);
+    }
+
+
+    public function deleteMessage(){
+        
     }
 }

@@ -29,12 +29,12 @@ class Conversation
 
     /**
      * @ORM\OneToOne(targetEntity="Message")
-     * @ORM\JoinColumn(name="last_message_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="last_message_id", referencedColumnName="id",onDelete="CASCADE")
      */
     private $lastMessage;
 
     /**
-     * @ORM\OneToMany(targetEntity="Message", mappedBy="conversation")
+     * @ORM\OneToMany(targetEntity="Message", mappedBy="conversation",orphanRemoval=true,cascade={"remove"})
      */
     private $messages;
 
