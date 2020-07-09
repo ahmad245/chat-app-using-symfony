@@ -1,8 +1,8 @@
 const activeClass = (e) => {
-  console.log(e.target.closest("a").classList.contains("active"))
+    console.log(e.target.closest("a").classList.contains("active"))
     if (e.target.closest("a").classList.contains("active")) {
-      e.preventDefault();
-        return true; ;
+        e.preventDefault();
+        return true;;
     } else {
         document.querySelectorAll("a").forEach((el) => {
             if (el.classList.contains("active")) {
@@ -17,11 +17,15 @@ const activeClass = (e) => {
 const fetchMessages = (id, e = null) => {
     convId = id;
 
+
     let messages;
+    btn.disabled = false;
+    message.disabled = false;
 
     if (e) {
-      let isClecked=  activeClass(e);
-      if(isClecked) return;
+        let isClecked = activeClass(e);
+        chat.scrollTo(0, chat.scrollHeight);
+        if (isClecked) return;
     }
     messages = document.querySelector(`ul[data-conversation="${id}"]`);
     if (!messages) {
@@ -43,6 +47,8 @@ const fetchMessages = (id, e = null) => {
 
             messages.append(me);
             chat.append(messages);
+            chat.scrollTo(0, chat.scrollHeight);
+
         });
         return response.data;
     });
@@ -118,9 +124,10 @@ btn.addEventListener("click", () => {
             mess.append(me);
 
             let li = document.getElementById(`${convId}`);
-            li.querySelector(".status").innerText = content;
+            li.querySelector(".status").innerText = content.substr(0, 10);
 
-            listUser.insertBefore(li, listUser.querySelectorAll("li")[0]);
+            listUser.insertBefore(li, listUser.querySelectorAll("a")[0]);
+            chat.scrollTo(0, chat.scrollHeight);
         });
 });
 
@@ -147,7 +154,7 @@ const updateConversation = (el) => {
     }
     li.querySelector(".status").innerText = el.content;
 
-    listUser.insertBefore(li, listUser.querySelectorAll("li")[0]);
+    listUser.insertBefore(li, listUser.querySelectorAll("a")[0]);
 };
 
 const addConv = (e) => {

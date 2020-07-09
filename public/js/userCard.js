@@ -7,7 +7,7 @@ const createUserCard = (email, id, lastMessag = "") => {
              <div class="about">
           <div class="name">${email}</div>
           <div class="status">
-           ${lastMessag || 'no yet message'}
+           ${  lastMessag ? lastMessag.substr(0,10) : 'no yet message'}
           </div>
           <i class="fa fa-circle online" id="${email}"></i> 
     </div>
