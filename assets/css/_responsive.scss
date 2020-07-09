@@ -1,6 +1,23 @@
 html {
     // This defines what 1rem is
     //  font-size: 62.5%; //1 rem = 10px; 10px/16px = 62.5%
+    @include respond(phone) {
+        // width < 1200?
+        // .people-list {
+        //     display: none;
+        // }
+        // .chat {
+        //     flex-basis: 100%;
+        //     background: #F2F5F8;
+        //     border-top-right-radius: .5rem;
+        //     border-bottom-right-radius: .5rem;
+        //     border-top-left-radius: .5rem;
+        //     border-bottom-left-radius: .5rem;
+        // }
+        // .sidenav-trigger {
+        //     display: block;
+        // }
+    }
     @include respond(tab-land) {
         // width < 1200?
         font-size: 80%; //1 rem = 9px, 9/16 = 50%
@@ -8,6 +25,15 @@ html {
     @include respond(tab-port) {
         // width < 900?
         font-size: 65%; //1 rem = 8px, 8/16 = 50%
+        .chat {
+            margin: 0;
+        }
+    }
+    @include respond(icon-sceen) {
+        // width < 900?
+        .chat {
+            margin: 0;
+        }
     }
     @include respond(big-desktop) {
         font-size: 90%; //1rem = 12, 12/16

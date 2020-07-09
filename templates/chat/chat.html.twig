@@ -1,6 +1,7 @@
+
   <div class="chat">
       <div class="chat-header clearfix">
-        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01_green.jpg" alt="avatar" />
+        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01_green.jpg" class="responsive-img" alt="avatar" />
         
         <div class="chat-about">
           <div class="chat-with">Chat with Vincent Porter</div>
@@ -15,13 +16,19 @@
       </div> <!-- end chat-history -->
       
       <div class="chat-message clearfix">
-        <textarea name="message-to-send" id="message-to-send" placeholder ="Type your message" rows="3"></textarea>
+        <div class="row">
+        <div class="input-field col s12">
+          <textarea id="textarea1" class="materialize-textarea" row="3"></textarea>
+          <label for="textarea1">write your message</label>
+        </div>
+      </div>
                 
         <i class="fa fa-file-o"></i> &nbsp;&nbsp;&nbsp;
         <i class="fa fa-file-image-o"></i>
         
-        <button id="btn">Send</button>
+        <button id="btn" class="btn right">Send</button>
 
       </div> <!-- end chat-message -->
       
     </div> <!-- end chat -->
+ 

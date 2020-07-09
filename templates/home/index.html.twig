@@ -24,10 +24,8 @@
 			position: relative;
 		}
 		.icon_add_conv {
-			position: absolute;
-			top: 1rem;
-			right: 1rem;
-			cursor: pointer;
+		margin-left:auto;
+    cursor:pointer;
 		}
 		.person_add {
 			width: 100%;
@@ -37,26 +35,46 @@
       display:flex;
       align-items:center;
     }
+    .toggelClass{
+      flex-basis:100%;
+    }
+     .userCard{
+		 display:flex;
+		 align-items:center;
+	 }
+	 .userCard img{
+		 margin-right:.5rem;
+	 }
+	 .sidenav-trigger{
+		 top: 96px !important;
+	 }
 	</style>
-	<div class="container clearfix">
-		<div class="people-list" id="people-list">
-			<div class="search">
+	 
+
+	
+ 	
+	
+	 
+		<ul class="people-list sidenav sidenav-fixed" id="people-list">
+			<li class="search">
 				<input type="text" placeholder="search"/>	<a class="modal-trigger " href="#modal1" id="createConv">	<i class="material-icons ">person_add</i></a>
 				<i class="fa fa-search"></i>
-			</div>
+			</li>
 
-			<div class="person_add">
+			<li class="person_add">
 			
-</div>
+          </li>
 			<!-- Modal Structure -->
-			{% include "modal/modalUserList.html.twig" %}
-			<ul class="list list_user"></ul>
-		</div>
+		
+
+			<ul class="list list_user collection"></ul>
+		</ul>
 
 		{# chat #}
 		{% include "chat/chat.html.twig" %}
 
-	</div>
+{% include "modal/modalUserList.html.twig" %}
+	 <a href="#" data-target="people-list" class="sidenav-trigger btn-floating btn-small"><i class="material-icons">menu</i></a>
 	<!-- end container -->
 
 {% endblock %}
@@ -70,4 +88,19 @@
 	<script src="/js/message.js"></script>
 
 	<script src="js/manageChat.js"></script>
+  <script>
+   {# let sideIcon=document.getElementById('side');
+   sideIcon.addEventListener('click',()=>{
+     let peopleList=document.querySelector('.people-list');
+     if(peopleList.style.display=="block")
+         { 
+			 peopleList.style.display="none";
+			 //peopleList.classList.remove('toggelClass');
+			 }
+      else{
+       peopleList.style.display="block";
+	    //peopleList.classList.add('toggelClass');
+      }   
+   }) #}
+  </script>
 {% endblock %}

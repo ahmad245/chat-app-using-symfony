@@ -1,14 +1,17 @@
 const activeClass = (e) => {
-    if (e.target.closest("li").classList.contains("active")) {
-        return;
+  console.log(e.target.closest("a").classList.contains("active"))
+    if (e.target.closest("a").classList.contains("active")) {
+      e.preventDefault();
+        return true; ;
     } else {
-        document.querySelectorAll("li").forEach((el) => {
+        document.querySelectorAll("a").forEach((el) => {
             if (el.classList.contains("active")) {
                 el.classList.remove("active");
             }
         });
-        e.target.closest("li").classList.add("active");
+        e.target.closest("a").classList.add("active");
     }
+    return false;
 };
 
 const fetchMessages = (id, e = null) => {
@@ -17,7 +20,8 @@ const fetchMessages = (id, e = null) => {
     let messages;
 
     if (e) {
-        activeClass(e);
+      let isClecked=  activeClass(e);
+      if(isClecked) return;
     }
     messages = document.querySelector(`ul[data-conversation="${id}"]`);
     if (!messages) {

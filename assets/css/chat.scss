@@ -3,31 +3,28 @@ $green: #86BB71;
 $blue: #94C2ED;
 $orange: #E38968;
 $gray: #92959E;
-*,
-*:before,
-*:after {
-    box-sizing: border-box;
-}
-
 body {
     background: #C5DDEB;
     font: "Lato", Arial, sans-serif;
-    padding: 4rem 0;
     color: white;
-    font-size: .625rem;
+    font-size: 62.5%;
+    overflow: hidden;
 }
 
 .container {
-    margin: 0 auto;
-    width: 75rem;
     background: #444753;
     border-radius: .5rem;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
+    // padding: 4rem 0;
+}
+
+.sidenav {
+    top: 64px !important;
 }
 
 .people-list {
-    width: 26rem;
-    float: left;
+    padding: 0 .5rem;
+    background: #444753;
     .search {
         padding: 2rem;
     }
@@ -38,37 +35,25 @@ body {
         color: white;
         background: #6A6C75;
         width: 90%;
-        font-size: 1.4rem;
+        font-size: 1rem;
     }
     .fa-search {
         position: relative;
         left: -2.5rem;
     }
-    ul {
-        padding: 2rem;
-        height: 77rem;
-        li {
-            padding-bottom: 2rem;
-        }
+    .collection-item {
+        display: flex !important;
+        align-items: center;
     }
-    img {
-        float: left;
-    }
-    .about {
-        float: left;
-        margin-top: .8rem;
-    }
-    .about {
-        padding-left: .8rem;
-    }
-    .status {
-        color: $gray;
+    .collection-item img {
+        width: 3rem;
+        height: 3rem;
+        margin-right: .5rem;
     }
 }
 
 .chat {
-    width: 49rem;
-    float: left;
+    margin: 0 20rem;
     background: #F2F5F8;
     border-top-right-radius: .5rem;
     border-bottom-right-radius: .5rem;
@@ -79,30 +64,12 @@ body {
         img {
             float: left;
         }
-        .chat-about {
-            float: left;
-            padding-left: 1rem;
-            margin-top: .6rem;
-        }
-        .chat-with {
-            font-weight: bold;
-            font-size: 1.6rem;
-        }
-        .chat-num-messages {
-            color: $gray;
-        }
-        .fa-star {
-            float: right;
-            color: #D8DADF;
-            font-size: 2rem;
-            margin-top: 1.2rem;
-        }
     }
     .chat-history {
         padding: 3rem 3rem 2rem;
         border-bottom: 2px solid white;
         overflow-y: scroll;
-        height: 50.75rem;
+        height: 38.5rem;
         .message-data {
             margin-bottom: 1.5rem;
         }
@@ -145,34 +112,12 @@ body {
         }
     }
     .chat-message {
-        padding: 3rem;
-        textarea {
-            width: 100%;
-            border: none;
-            padding: 1rem 2rem;
-            font: "Lato", Arial, sans-serif;
-            margin-bottom: 1rem;
-            border-radius: .5rem;
-            resize: none;
-        }
+        padding: 1rem;
         .fa-file-o,
         .fa-file-image-o {
             font-size: 1.6rem;
             color: gray;
             cursor: pointer;
-        }
-        button {
-            float: right;
-            color: $blue;
-            font-size: 1.6rem;
-            text-transform: uppercase;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            background: #F2F5F8;
-            &:hover {
-                color: darken($blue, 7%);
-            }
         }
     }
 }
@@ -216,3 +161,16 @@ body {
     clear: both;
     height: 0;
 }
+
+// header,
+// main,
+// footer {
+//     padding-left: 300px;
+// }
+// @media only screen and (max-width: 992px) {
+//     header,
+//     main,
+//     footer {
+//         padding-left: 0;
+//     }
+// }

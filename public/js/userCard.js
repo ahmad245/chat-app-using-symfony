@@ -1,9 +1,9 @@
 const createUserCard = (email, id, lastMessag = "") => {
-    let li = document.createElement("li");
-    li.classList.add("clearfix");
+    let li = document.createElement("a");
+    li.classList.add("collection-item");
     li.setAttribute("id", id);
     li.innerHTML = `
-          <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01.jpg" alt="avatar" />
+          <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01.jpg" class="responsive-img circle" alt="avatar" />
              <div class="about">
           <div class="name">${email}</div>
           <div class="status">
@@ -17,17 +17,18 @@ const createUserCard = (email, id, lastMessag = "") => {
 };
 
 const createFriendCard = (firstName, email, id) => {
-    let div = document.createElement("div");
-    div.classList.add("chat-header");
+    let div = document.createElement("li");
+    div.classList.add("collection-item");
+    div.classList.add("userCard");
     div.innerHTML = `
-      <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01_green.jpg" alt="avatar" />
+      <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01_green.jpg" class="responsive-img circle" alt="avatar" />
         
         <div class="chat-about">
           <div class="chat-with">Chat with ${firstName}</div>
           <div class="chat-num-messages">${email}</div>
           
         </div>
-          <i class="material-icons icon_add_conv" id="${id}">add</i>
+        <i class="material-icons icon_add_conv" id="${id}">add</i>
   `;
     return div;
 };
