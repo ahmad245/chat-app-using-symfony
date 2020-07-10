@@ -47,4 +47,18 @@ class UserRepository extends ServiceEntityRepository
         ;
     }
     */
+
+
+    public function findAllUserWithoutMe($me){
+
+        return $this->createQueryBuilder('u')
+              ->where('u.id != :me')
+              ->setParameter('me', $me)
+              ->getQuery()
+              ->getResult();
+              
+
+    }
+
+  
 }

@@ -5,69 +5,21 @@
 
 {% block body %}
 	<style>
-		.modal {
-			background: #F2F5F8;
-			color: #434651;
-
-		}
-		.modal h4 {
-			color: #434651;
-		}
-		.chat-header .chat-with {
-			font-weight: bold;
-			font-size: 16px;
-
-		}
-		.chat-header {
-			padding: 20px;
-			border-bottom: 2px solid white;
-			position: relative;
-		}
-		.icon_add_conv {
-		margin-left:auto;
-    cursor:pointer;
-		}
-		.person_add {
-			width: 100%;
-			text-align: center;
-		}
-    .search{
-      display:flex;
-      align-items:center;
-    }
-    .toggelClass{
-      flex-basis:100%;
-    }
-     .userCard{
-		 display:flex;
-		 align-items:center;
-	 }
-	 .userCard img{
-		 margin-right:.5rem;
-	 }
-	 .sidenav-trigger{
-		 top: 65px !important;
-          position: fixed;
-	 }
+	
 	</style>
-	 
-
-	
- 	
-	
-	 
 		<ul class="people-list sidenav sidenav-fixed" id="people-list">
 			<li class="search">
-				<input type="text" placeholder="search"/>	<a class="modal-trigger " href="#modal1" id="createConv">	<i class="material-icons ">person_add</i></a>
-				<i class="fa fa-search"></i>
+				<input type="text" placeholder="search"/>	
+				<a class="modal-trigger " href="#modal1" id="createConv">	
+				   <i class="material-icons ">person_add</i>
+				</a>
+				
 			</li>
 
 			<li class="person_add">
 			
           </li>
 			<!-- Modal Structure -->
-		
-
 			<ul class="list list_user collection"></ul>
 		</ul>
 

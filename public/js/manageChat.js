@@ -98,6 +98,18 @@ const fetchUsers = () => {
                 //fetchUsers()
             };
             return data;
+        }).then(async() => {
+            let urlUsers = "/user/allUsers";
+            let allData = await axios.get(urlUsers);
+            let users = allData.data.users;
+            users.forEach((el) => {
+                if (!document.getElementById(el.email)) {
+                    let div = createFriendCard(el.firstName, el.email, el.id);
+                    friends.append(div);
+                    div.querySelector("i").addEventListener("click", addConv);
+                }
+
+            });
         })
         .catch((err) => {
             console.log(err);
@@ -158,11 +170,11 @@ const updateConversation = (el) => {
 };
 
 const addConv = (e) => {
-    let id = e.target.id;
-    if (id) {
+    let idTarget = e.target.id;
+    if (idTarget) {
         axios
-            .post(`/conversations/add/${id}`, {
-                id: id,
+            .post(`/conversations/add/${idTarget}`, {
+                id: idTarget,
             })
             .then((response) => {
                 let id = response.data.id;
@@ -173,6 +185,7 @@ const addConv = (e) => {
                 li.addEventListener("click", fetchMessages.bind(null, id));
                 listUser.append(li);
                 updateStateForFirstTime(user);
+                document.getElementById(idTarget).parentElement.remove();
             });
     }
 };
@@ -226,6 +239,8 @@ poulateAllUsers = async() => {
         div.querySelector("i").addEventListener("click", addConv);
     });
 };
-poulateAllUsers();
+// poulateAllUsers();
+
+//createConv.addEventListener('click',fetchUsers)
 
 fetchUsers();

@@ -46,10 +46,14 @@ ConversationRepository $conversationRepository)
      */
 
     public function getAllUser(){
-        $users= $this->userRepository->findAll();
+       // $users= $this->userRepository->findAll();
+    // $users=$this->userRepository->findAllUserWithoutMe($this->getUser()->getId());
+     $users=$this->userRepository->findAllUserWithoutMe($this->getUser());
  
         return $this->json(['users'=>$users],200,[],['groups'=>['users']]);
      }
+
+   
 
 
 }

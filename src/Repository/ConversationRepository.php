@@ -102,8 +102,10 @@ class ConversationRepository extends ServiceEntityRepository
                        ])
                      ->orderBy('lm.createdAt', 'DESC');
                        return $query->getQuery()->getResult();   
-
     }
+
+  
+
 
     // public function findConversationsByUser(int $userId)
     // {
