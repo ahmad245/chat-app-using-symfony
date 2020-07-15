@@ -16,7 +16,7 @@ const createUserCard = (email, id, lastMessag = "") => {
     return li;
 };
 
-const createFriendCard = (firstName, email, id) => {
+const createFriendCard = (firstName, email, id,participantId) => {
     let div = document.createElement("li");
     div.classList.add("collection-item");
     div.classList.add("userCard");
@@ -28,7 +28,7 @@ const createFriendCard = (firstName, email, id) => {
           <div class="chat-num-messages">${email}</div>
           
         </div>
-        <i class="material-icons icon_add_conv" id="${id}">add</i>
+        <i class="material-icons icon_add_conv" data-participantId='${participantId}' id='${id}'>add</i>
   `;
     return div;
 };

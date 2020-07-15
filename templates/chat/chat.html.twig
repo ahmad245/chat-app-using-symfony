@@ -1,34 +1,35 @@
+<div class="chat">
+	<ul class="list list_user collection chat-header-user">
+		<a class="collection-item " id="chat-header">
+         {# <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01.jpg" class="responsive-img circle" alt="avatar" /> #}
+                 <div class="about">
+                    <div class="name"></div>
+                    
+                    <i class="material-icons">person</i> 
+                </div>
+      </a>
+	</ul>
+	<!-- end chat-header -->
 
-  <div class="chat">
-      <div class="chat-header clearfix">
-        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01_green.jpg" class="responsive-img" alt="avatar" />
-        
-        <div class="chat-about">
-          <div class="chat-with">Chat with Vincent Porter</div>
-          <div class="chat-num-messages">already 1 902 messages</div>
-        </div>
-        <i class="fa fa-star"></i>
-      </div> <!-- end chat-header -->
-      
-      <div class="chat-history">
-   
-        
-      </div> <!-- end chat-history -->
-      
-      <div class="chat-message clearfix">
-        <div class="row">
-        <div class="input-field col s12">
-          <textarea  class="materialize-textarea" row="1" id="message-to-send" disabled></textarea>
-          <label for="textarea1">write your message</label>
-        </div>
-      </div>
-                
-        <i class="fa fa-file-o"></i> &nbsp;&nbsp;&nbsp;
-        <i class="fa fa-file-image-o"></i>
-        
-        <button id="btn" class="btn right" disabled >Send</button>
+	<div class="chat-history"></div>
+	<!-- end chat-history -->
 
-      </div> <!-- end chat-message -->
-      
-    </div> <!-- end chat -->
- 
+	<div class="chat-message clearfix">
+		<div class="row">
+			<div class="input-field col s12">
+				<textarea class="materialize-textarea" row="1" id="message-to-send" disabled></textarea>
+				<label for="textarea1">write your message</label>
+			</div>
+		</div>
+
+		<i class="fa fa-file-o"></i>
+		&nbsp;&nbsp;&nbsp;
+		<i class="fa fa-file-image-o"></i>
+
+		<button id="btn" class="btn right" disabled>Send</button>
+
+	</div>
+	<!-- end chat-message -->
+
+</div>
+<!-- end chat -->

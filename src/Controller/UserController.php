@@ -7,9 +7,12 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ConversationRepository;
+use App\Repository\BlockListRepository;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends AbstractController
 {
+    const ATTRIBUTES_TO_SERIALIZE = [  'id','email','firstName','lastName','participantId'];
       /**
      * @var UserRepository
      */
@@ -22,14 +25,19 @@ class UserController extends AbstractController
      * @var ConversationRepository
      */
     private $conversationRepository;
+     /**
+     * @var BlockListRepository
+     */
+    private $repoBlockList;
 
     public function __construct(UserRepository $userRepository,
-                                EntityManagerInterface $entityManager,
+                                EntityManagerInterface $entityManager,BlockListRepository $repoBlockList,
 ConversationRepository $conversationRepository)
     {
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
         $this->conversationRepository = $conversationRepository;
+        $this->repoBlockList = $repoBlockList;
     }
 
     /**
@@ -49,8 +57,16 @@ ConversationRepository $conversationRepository)
        // $users= $this->userRepository->findAll();
     // $users=$this->userRepository->findAllUserWithoutMe($this->getUser()->getId());
      $users=$this->userRepository->findAllUserWithoutMe($this->getUser());
+     $userBlockList=  $this->repoBlockList->findByUserId($this->getUser());
+    // dump($userBlockList);die;
+      $data=[
+          'users'=>$users,
+          'userBlockList'=>$userBlockList
+      ];
  
-        return $this->json(['users'=>$users],200,[],['groups'=>['users']]);
+        return $this->json($data, Response::HTTP_CREATED, [], [
+            'attributes' => self::ATTRIBUTES_TO_SERIALIZE
+        ]);
      }
 
    

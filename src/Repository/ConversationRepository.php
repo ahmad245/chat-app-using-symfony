@@ -15,9 +15,11 @@ use Doctrine\ORM\Query\Expr\Join;
  */
 class ConversationRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private $blockListRepo;
+    public function __construct(ManagerRegistry $registry,BlockListRepository $blockListRepo)
     {
         parent::__construct($registry, Conversation::class);
+        $this->blockListRepo=$blockListRepo;
     }
 
     // /**
@@ -87,20 +89,35 @@ class ConversationRepository extends ServiceEntityRepository
                     return $query->getQuery()->getResult();
                     
     }
+  
       public function findConversationsByUser(int $userId){
           $ids=$this->getAllConveersationIds($userId);
-           $query=$this->createQueryBuilder('c')
-           ->select('c.id as conversationId ,otherUser.email,otherUser.lastActivityAt,otherUser.id,lm.content,lm.createdAt')
+          $participantIds= [];
+          $participantIds=$this->blockListRepo->getAllparticipantIdsInBlockList($userId) ;
+         
+         
+           $query=$this->createQueryBuilder('c');
+           $query->select('c.id as conversationId ,otherUser.email,otherUser.lastActivityAt,otherUser.id,lm.content,lm.createdAt,p.id as participantId')
                        ->join('c.participants','p')
                         ->leftJoin('c.lastMessage', 'lm')
+                      
+                        
                        ->innerJoin('p.user', 'otherUser')
-                       ->where('p.user != :me')
-                       ->andWhere('p.conversation IN (:ids)')
-                       ->setParameters([
-                           'me'=>$userId,
-                           'ids'=>$ids
-                       ])
+                       
+                       ->andWhere('p.user != :me')
+                       ->andWhere('p.conversation IN (:ids)');
+                       if(count($participantIds)>0){
+                       // dump(count($participantIds));die;
+                        $query->andWhere( $query->expr()->notIn('p.id ',  ':participantIds'))
+                        ->setParameter('participantIds',$participantIds);
+                       }
+                      
+                       $query
+                       ->setParameter('me',$userId)
+                       ->setParameter('ids',$ids)
+                      
                      ->orderBy('lm.createdAt', 'DESC');
+                   
                        return $query->getQuery()->getResult();   
     }
 

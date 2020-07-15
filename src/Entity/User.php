@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 use Symfony\Component\Serializer\Annotation\Groups;
 use DateTimeInterface;
 
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\HasLifecycleCallbacks()
@@ -141,6 +142,11 @@ class User implements UserInterface, \Serializable
 
     public $isActive;
 
+    /**
+     * @ORM\OneToMany(targetEntity=BlockList::class, mappedBy="user")
+     */
+    private $blockLists;
+
     public function  getIsActive(){
         $delay = new \DateTime('2 minutes ago');
 
@@ -188,6 +194,7 @@ public function isActiveNow()
         
         $this->participants = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->blockLists = new ArrayCollection();
     
    
   
@@ -582,6 +589,37 @@ public function isActiveNow()
             // set the owning side to null (unless already changed)
             if ($message->getUser() === $this) {
                 $message->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|BlockList[]
+     */
+    public function getBlockLists(): Collection
+    {
+        return $this->blockLists;
+    }
+
+    public function addBlockList(BlockList $blockList): self
+    {
+        if (!$this->blockLists->contains($blockList)) {
+            $this->blockLists[] = $blockList;
+            $blockList->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBlockList(BlockList $blockList): self
+    {
+        if ($this->blockLists->contains($blockList)) {
+            $this->blockLists->removeElement($blockList);
+            // set the owning side to null (unless already changed)
+            if ($blockList->getUser() === $this) {
+                $blockList->setUser(null);
             }
         }
 

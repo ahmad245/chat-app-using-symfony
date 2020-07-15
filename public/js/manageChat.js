@@ -1,5 +1,5 @@
 const activeClass = (e) => {
-    console.log(e.target.closest("a").classList.contains("active"))
+
     if (e.target.closest("a").classList.contains("active")) {
         e.preventDefault();
         return true;;
@@ -15,16 +15,22 @@ const activeClass = (e) => {
 };
 
 const fetchMessages = (id, e = null) => {
+    message.value = '';
     convId = id;
-
-
     let messages;
-    btn.disabled = false;
+
+
     message.disabled = false;
 
+    if (document.getElementById(convId).querySelector('i').dataset.block) {
+        sendMessage.disabled = true;
+        message.disabled = true;
+
+    }
     if (e) {
         let isClecked = activeClass(e);
         chat.scrollTo(0, chat.scrollHeight);
+
         if (isClecked) return;
     }
     messages = document.querySelector(`ul[data-conversation="${id}"]`);
@@ -49,39 +55,89 @@ const fetchMessages = (id, e = null) => {
             chat.append(messages);
             chat.scrollTo(0, chat.scrollHeight);
 
+
+
         });
+
         return response.data;
+    }).then(() => {
+
     });
 };
 
 const fetchUsers = () => {
-    listUser.innerHTML = "";
-    let urlUser = "/conversations";
+        listUser.innerHTML = "";
+        let urlUser = "/conversations";
 
-    return axios
-        .get(urlUser)
-        .then((response) => {
-            urlHub = response.headers.link.match(
-                /<([^>]+)>;\s+rel=(?:mercure|"[^"]*mercure[^"]*")/
-            )[1];
-            hub = new URL(urlHub);
-            hub.searchParams.append("topic", `/conversations/${response.data.user}`);
-            // Subscribe to updates
-            const eventSource = new EventSource(hub);
-            eventSource.onmessage = (event) => {
-                updateConversation(JSON.parse(event.data));
-            };
-            //   const hubUrl = response.headers.get('Link').match(/<([^>]+)>;\s+rel=(?:mercure|"[^"]*mercure[^"]*")/)[1];
+        return axios
+            .get(urlUser)
+            .then((response) => {
+                    urlHub = response.headers.link.match(
+                        /<([^>]+)>;\s+rel=(?:mercure|"[^"]*mercure[^"]*")/
+                    )[1];
+                    console.log(response.data);
+                    hub = new URL(urlHub);
+                    hub.searchParams.append("topic", `/conversations/${response.data.user}`);
+                    // Subscribe to updates
+                    const eventSource = new EventSource(hub);
+                    eventSource.onmessage = (event) => {
+                        updateConversation(JSON.parse(event.data));
+                    };
+                    //   const hubUrl = response.headers.get('Link').match(/<([^>]+)>;\s+rel=(?:mercure|"[^"]*mercure[^"]*")/)[1];
 
-            response.data.conversations.forEach((el) => {
-                // userCard.js
-                let li = createUserCard(el.email, el.conversationId, el.content);
+                    response.data.conversations.forEach((el) => {
+                                // userCard.js
+                                let li = createUserCard(el.email, el.conversationId, el.content);
+                                blockList = response.data.blockedBy;
 
-                li.addEventListener("click", (e) => {
-                    fetchMessages(el.conversationId, e);
+                                blockList.forEach((userBlock) => {
+                                    if (userBlock.email == el.email) {
+
+                                        li.querySelector('i').setAttribute('data-block', true);
+                                        li.querySelector('i').innerText = "blocked";
+                                    }
+                                })
+
+                                li.addEventListener("click", (e) => {
+                                            fetchMessages(el.conversationId, e);
+                                            let aHeader = document.getElementById('chat-header');
+                                            aHeader.innerHTML = `
+                                            <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01.jpg" class="responsive-img circle" alt="avatar" />
+                                                    <div class="about">
+                                                <div class="name">${el.email}</div>
+                                                
+                                                <i class="fa fa-circle online" data-participantsId="${el.participantId}" id="${el.email}header">${document.getElementById(`${el.email}`).innerText}</i> 
+                                            </div>
+                                            <a class='dropdown-trigger  card-header icon_add_conv' href='#' data-target='dropdown1' ><i class="material-icons icon_add_conv" >more_vert</i> </a>
+                                            <ul id='dropdown1' class='dropdown-content'>
+                                                    <li><a href="#!" data-url="/blocklist/add" id="addToBlockList">Add To Block List</a></li>
+                                                    <li class="divider" tabindex="-1"></li>
+                                                    <li><a href="#!"><i class="material-icons">view_module</i>four</a></li>
+                                                </ul>
+                                        
+                                       `;
+                                        var dropdownelems = document.querySelectorAll('.dropdown-trigger');
+                                        var dropdowninstances = M.Dropdown.init(dropdownelems, {});     
+
+                                        document.getElementById('addToBlockList').addEventListener('click',(e)=>{
+                                         
+
+                                            axios.post(`/blocklist/add/${el.participantId}`).then((response)=>{
+                                                console.log(response.data)
+                                            })
+
+
+                                            
+                                        })
+
+              
+            
                 });
+
+
                 listUser.append(li);
                 updateStateForFirstTime(el);
+              
             });
 
             return response.data;
@@ -92,22 +148,24 @@ const fetchUsers = () => {
             const eventSource = new EventSource(hub);
             eventSource.onmessage = (event) => {
                 let online = JSON.parse(event.data);
-
                 updateState(online);
 
-                //fetchUsers()
             };
             return data;
         }).then(async() => {
             let urlUsers = "/user/allUsers";
             let allData = await axios.get(urlUsers);
             let users = allData.data.users;
-            users.forEach((el) => {
-                if (!document.getElementById(el.email)) {
-                    let div = createFriendCard(el.firstName, el.email, el.id);
+              userBlockList=allData.data.userBlockList;
+     
+            users.forEach((el,index) => {
+               
+                if (!document.getElementById(el[0].email) && !userBlockList.find(element=>element.email==el[0].email)) {
+                    let div = createFriendCard(el[0].firstName, el[0].email, el[0].id,el.participantId);
                     friends.append(div);
                     div.querySelector("i").addEventListener("click", addConv);
                 }
+                
 
             });
         })
@@ -116,10 +174,14 @@ const fetchUsers = () => {
         });
 };
 
-btn.addEventListener("click", () => {
+sendMessage.addEventListener("click", () => {
     let content = message.value;
-    axios
-        .post(`/messages/${convId}`, {
+    if(document.getElementById(convId).querySelector('i').dataset.block){
+        sendMessage.disabled = true;
+        message.disabled=true;
+        return;
+    }
+    axios.post(`/messages/${convId}`, {
             content: content,
         })
         .then((response) => {
@@ -164,14 +226,43 @@ const updateConversation = (el) => {
         listUser.append(li);
         updateStateForFirstTime(el);
     }
-    li.querySelector(".status").innerText = el.content;
+    li.querySelector(".status").innerText = el.content.substr(0, 10);
 
     listUser.insertBefore(li, listUser.querySelectorAll("a")[0]);
 };
 
+const removeFromBlockList=(e)=>{
+     let idTarget = e.target.id;
+     console.log(idTarget,userBlockList)
+    if (idTarget) {
+   let elm=userBlockList.find(el=>el.id==idTarget)
+      if(elm){
+         
+          axios.post(`/blocklist/remove/${elm.blockId}`, {
+            id: elm.id,
+        }) .then((response) => {
+            console.log(response)
+        })
+
+          return;
+      }
+  }
+}
 const addConv = (e) => {
     let idTarget = e.target.id;
     if (idTarget) {
+   let elm=userBlockList.find(el=>el.userParticipant==idTarget)
+      if(elm){
+         
+          axios.post(`/blocklist/remove/${elm.id}`, {
+            id: elm.id,
+        }) .then((response) => {
+            console.log(response)
+        })
+
+          return;
+      }
+     // return;
         axios
             .post(`/conversations/add/${idTarget}`, {
                 id: idTarget,
@@ -194,40 +285,72 @@ const updateState = (online) => {
     let element = document.getElementById(`${online.email}`);
     clearInterval(resttime[online.email]);
     if (element) {
-        element.innerText = online.online ?
-            "online" :
-            moment(online.lastActive).fromNow();
+         if( element.dataset && element.dataset.block){
+           //  document.getElementById(`${el.email}header`).innerText = element.innerText;
+         return;
+    }
+        element.innerText = online.online ?"online" : moment(online.lastActive).fromNow();
+            if (document.getElementById(`${online.email}header`) ) {
+              
+                    document.getElementById(`${online.email}header`).innerText = element.innerText
+                }
         if (!online.online) {
             resttime[online.email] = setInterval(() => {
-                if (document.getElementById(`${online.email}`).innerText != "online") {
-                    document.getElementById(`${online.email}`).innerText = moment(
+                
+                if (element.innerText != "online") {
+                    element.innerText = moment(
                         online.lastActive
                     ).fromNow();
+                
                 }
+                    if (document.getElementById(`${online.email}header`) ) {
+                       
+                    document.getElementById(`${online.email}header`).innerText =element.innerText
+                        }
             }, 1000);
         }
     }
 };
 
+
 const updateStateForFirstTime = (el) => {
     let element = document.getElementById(`${el.email}`);
+   
     clearInterval(resttime[el.email]);
     if (element) {
-        element.innerText =
-            moment().subtract(2, "minutes") < moment(el.lastActivityAt) ?
-            "online" :
-            moment(el.lastActivityAt).fromNow();
+        console.log(element.dataset.block)
+         if( element.dataset && element.dataset.block){
+           //  document.getElementById(`${el.email}header`).innerText = element.innerText;
+         return;
+    }
+        element.innerText = moment().subtract(2, "minutes") < moment(el.lastActivityAt) ? "online" : moment(el.lastActivityAt).fromNow();
+         if (document.getElementById(`${el.email}header`) ) {
+                    document.getElementById(`${el.email}header`).innerText = element.innerText
+                }
+
         if (!(moment().subtract(1, "minutes") < moment(el.lastActivityAt))) {
             resttime[el.email] = setInterval(() => {
+                
                 if (document.getElementById(`${el.email}`).innerText != "online") {
                     document.getElementById(`${el.email}`).innerText = moment(
                         el.lastActivityAt
                     ).fromNow();
+
+                   
                 }
+                 if (document.getElementById(`${el.email}header`) ) {
+                     
+                    document.getElementById(`${el.email}header`).innerText = element.innerText
+                }
+              
             }, 1000);
         }
     }
+    
 };
+
+
+
 
 poulateAllUsers = async() => {
     let urlUsers = "/user/allUsers";
@@ -243,4 +366,50 @@ poulateAllUsers = async() => {
 
 //createConv.addEventListener('click',fetchUsers)
 
+message.addEventListener('input', (e) => {
+    if(document.getElementById(convId).querySelector('i').dataset.block){
+        sendMessage.disabled = true;
+        message.disabled=true;
+        return;
+    }
+    if (message.value!=='') {
+        sendMessage.disabled = false;
+    } else {
+        sendMessage.disabled = true;
+    }
+})
+
+
+const getBlockList=()=>{
+    axios.get('/blocklist').then((response)=>{
+        let userList=response.data;
+        userList.forEach((el)=>{
+             let div = createFriendCard(el.firstName, el.email, el.id);
+              blockListCollection.append(div);
+                div.querySelector("i").addEventListener("click", removeFromBlockList);
+        })
+    })
+}
+
+getBlockList();
 fetchUsers();
+createConv.addEventListener('click',(e)=>{
+    if(friends.getElementsByTagName("li").length<1){
+        let div = document.createElement("li");
+    div.classList.add("collection-item");
+    div.classList.add("userCard");
+    div.innerText="you do not have friend yet";
+      friends.append(div);
+    }
+})
+
+
+// userBlockList.addEventListener('click',(e)=>{
+//     if(friends.getElementsByTagName("li").length<1){
+//         let div = document.createElement("li");
+//     div.classList.add("collection-item");
+//     div.classList.add("userCard");
+//     div.innerText="you do not have friend yet";
+//       friends.append(div);
+//     }
+// })

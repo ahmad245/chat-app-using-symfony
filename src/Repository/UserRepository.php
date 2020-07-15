@@ -52,7 +52,9 @@ class UserRepository extends ServiceEntityRepository
     public function findAllUserWithoutMe($me){
 
         return $this->createQueryBuilder('u')
+              ->select('u,p.id as participantId')
               ->where('u.id != :me')
+              ->leftJoin('u.participants','p')
               ->setParameter('me', $me)
               ->getQuery()
               ->getResult();

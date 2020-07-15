@@ -69,7 +69,7 @@ body {
         padding: 3rem 3rem 2rem;
         border-bottom: 2px solid white;
         overflow-y: scroll;
-        height: 65vh;
+        height: 62vh;
         .message-data {
             margin-bottom: 1.5rem;
         }
@@ -119,6 +119,15 @@ body {
             color: gray;
             cursor: pointer;
         }
+    }
+    .collection-item {
+        display: flex !important;
+        align-items: center;
+    }
+    .collection-item img {
+        width: 3rem;
+        height: 3rem;
+        margin-right: .5rem;
     }
 }
 

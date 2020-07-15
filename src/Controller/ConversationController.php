@@ -5,6 +5,7 @@ use App\Entity\User;
 use App\Entity\Participant;
 use App\Entity\Conversation;
 use App\Repository\UserRepository;
+use App\Repository\BlockListRepository;
 use Symfony\Component\WebLink\Link;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ConversationRepository;
@@ -27,6 +28,10 @@ class ConversationController extends AbstractController
      * @var UserRepository
      */
     private $userRepository;
+     /**
+     * @var BlockListRepository
+     */
+    private $repoBlockList;
     /**
      * @var EntityManagerInterface
      */
@@ -43,12 +48,13 @@ class ConversationController extends AbstractController
     public function __construct(UserRepository $userRepository,
                                 EntityManagerInterface $entityManager,
 ConversationRepository $conversationRepository
-, PublisherInterface $publisher)
+, PublisherInterface $publisher,BlockListRepository $repoBlockList)
     {
         $this->userRepository = $userRepository;
         $this->entityManager = $entityManager;
         $this->conversationRepository = $conversationRepository;
         $this->publisher = $publisher;
+        $this->repoBlockList = $repoBlockList;
     }
 
    
@@ -78,8 +84,14 @@ ConversationRepository $conversationRepository
          
     
             $this->publisher->__invoke($update);
+            $participantsId=[];
+            foreach ($conversations as $conv) {
+                array_push($participantsId,$conv['id']);
+            }
+               $userBlock=  $this->repoBlockList->findByUserIds($participantsId);
+         //  dump($userBlock);die;
 
-        return $this->json(['conversations'=>$conversations,'user'=>$this->getUser()->getUsername()]);
+        return $this->json(['conversations'=>$conversations,'user'=>$this->getUser()->getUsername(),'blockedBy'=>$userBlock]);
     }
 
      /**

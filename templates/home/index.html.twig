@@ -5,9 +5,41 @@
 
 {% block body %}
 	<style>
-	
+	.collection li.collection-item {
+    color: #26a69a;
+}
+.collection {
+   
+    position: inherit !important;
+	width: 100%;
+}
+.dropdown-content{
+	    min-width: 100px;
+}
 	</style>
-		<ul class="people-list sidenav sidenav-fixed" id="people-list">
+		<ul class="people-list sidenav sidenav-fixed " id="people-list">
+		    <li >
+			<ul class="collection ">
+			  <li class="collection-item  userCard">
+					 <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/chat_avatar_01_green.jpg" class="responsive-img circle" alt="avatar" />
+					 <div class="about">
+							<div class="name">{{app.user.email}}</div>
+							<div class="status">
+							 {{app.user.firstName}}
+							</div>
+                              
+                       </div>
+                     <a href="#!" class="card-header icon_add_conv dropdown-trigger" data-target='dropdownMy'><i class="material-icons icon_add_conv" >more_vert</i> </a>
+					  
+                                <ul id='dropdownMy' class='dropdown-content'>
+                                        <li><a class="modal-trigger" href="#blockListModal">Add To Block List </a></li>
+                                        <li><a href="#!">two</a></li>
+                                    </ul>
+                  
+				  </li>
+
+				 </ul> 
+           </li>
 			<li class="search">
 				<input type="text" placeholder="search"/>	
 				<a class="modal-trigger " href="#modal1" id="createConv">	
@@ -27,6 +59,7 @@
 		{% include "chat/chat.html.twig" %}
 
 {% include "modal/modalUserList.html.twig" %}
+{% include "block_list/index.html.twig" %}
 	 <a href="#" data-target="people-list" class="sidenav-trigger btn-floating btn-small"><i class="material-icons">menu</i></a>
 	<!-- end container -->
 
@@ -42,18 +75,6 @@
 
 	<script src="js/manageChat.js"></script>
   <script>
-   {# let sideIcon=document.getElementById('side');
-   sideIcon.addEventListener('click',()=>{
-     let peopleList=document.querySelector('.people-list');
-     if(peopleList.style.display=="block")
-         { 
-			 peopleList.style.display="none";
-			 //peopleList.classList.remove('toggelClass');
-			 }
-      else{
-       peopleList.style.display="block";
-	    //peopleList.classList.add('toggelClass');
-      }   
-   }) #}
+  
   </script>
 {% endblock %}
